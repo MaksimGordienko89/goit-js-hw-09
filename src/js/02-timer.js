@@ -5,8 +5,6 @@ import 'flatpickr/dist/flatpickr.min.css';
 input = document.querySelector('#datetime-picker');
 startBtn = document.querySelector('button[data-start]');
 
-startBtn.addEventListener('click', startTimer);
-
 const options = {
   allowInput: true,
   dateFormat: 'Y-m-d Hh:i',
@@ -58,3 +56,7 @@ function convertMs(ms) {
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
+
+startBtn.addEventListener('click', () => {
+  timer.start();
+});
