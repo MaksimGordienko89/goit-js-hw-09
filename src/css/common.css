@@ -22,17 +22,21 @@ img {
   margin: 30px;
 }
 .input-value {
+  text-align: center;
   font-size: 30px;
 }
 .timer {
   display: flex;
+  text-align: center;
 }
 
 .field {
+  text-align: center;
   padding: 20px;
   margin: 15px;
 }
 .value {
+  text-align: center;
   display: flex;
   font-size: 50px;
 }
