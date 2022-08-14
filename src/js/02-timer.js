@@ -1,6 +1,6 @@
 import flatpickr from 'flatpickr';
 import { Notify } from 'notiflix';
-import moment from 'moment';
+// import moment from 'moment';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const refs = {
@@ -14,7 +14,7 @@ const refs = {
 
 let selectedDate = null;
 let intervalId = null;
-const nowDate = moment().valueOf(new Date());
+const nowDate = new Date();
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -29,6 +29,7 @@ const options = {
       return;
     } else {
       refs.start.removeAttribute('disabled');
+      return (selectedDate = selectedDates[0]);
     }
   },
 };
@@ -41,9 +42,10 @@ refs.start.addEventListener('click', onTimer);
 
 function onTimer() {
   intervalId = setInterval(() => {
-    ms = moment().valueOf(selectedDate) - moment().valueOf(nowDate);
+    ms = selectedDate - Date.now();
     const timeComponent = convertMs(ms);
     updateClockFace(timeComponent);
+    refs.start.setAttribute('disabled', 'disabled');
   }, 1000);
 }
 
