@@ -1,32 +1,67 @@
 import flatpickr from 'flatpickr';
-import Notiflix from 'notiflix';
+import { Notify } from 'notiflix';
+import moment from 'moment';
 import 'flatpickr/dist/flatpickr.min.css';
 
-input = document.querySelector('#datetime-picker');
-startBtn = document.querySelector('button[data-start]');
+const refs = {
+  start: document.querySelector('button[data-start]'),
+  inputData: document.querySelector('#datetime-picker'),
+  day: document.querySelector('span[data-days]'),
+  hours: document.querySelector('span[data-hours]'),
+  minutes: document.querySelector('span[data-minutes]'),
+  seconds: document.querySelector('span[data-seconds]'),
+};
 
+let selectedDate = null;
+let intervalId = null;
+const nowDate = moment().valueOf(new Date());
 const options = {
-  allowInput: true,
-  dateFormat: 'Y-m-d Hh:i',
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    // console.log(selectedDates[0]);
+    if (selectedDates[0] < nowDate) {
+      Notify.failure('Please choose a date in the future', {
+        position: 'center-top',
+        timeout: 1500,
+      });
+      return;
+    } else {
+      refs.start.removeAttribute('disabled');
+    }
   },
 };
 
-const timer = {
-  start() {
-    const endTime = flatpickr(input, options);
-    setInterval(() => {
-      const currentTime = Date.now();
-      // console.log(endTime - currentTime);
-    }, 1000);
-  },
-};
-timer.start();
+refs.start.setAttribute('disabled', 'disabled');
+
+flatpickr(refs.inputData, options);
+
+refs.start.addEventListener('click', onTimer);
+
+function onTimer() {
+  intervalId = setInterval(() => {
+    ms = moment().valueOf(selectedDate) - moment().valueOf(nowDate);
+    const timeComponent = convertMs(ms);
+    updateClockFace(timeComponent);
+  }, 1000);
+}
+
+function updateClockFace(comp) {
+  refs.day.textContent = `${comp.days}`;
+  refs.hours.textContent = `${comp.hours}`;
+  refs.minutes.textContent = `${comp.minutes}`;
+  refs.seconds.textContent = `${comp.seconds}`;
+  if (
+    Number(comp.days) === 0 &&
+    Number(comp.hours) === 0 &&
+    Number(comp.minutes) === 0 &&
+    Number(comp.seconds) === 0
+  ) {
+    clearInterval(intervalId);
+    refs.start.setAttribute('disabled', 'disabled');
+  }
+}
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -49,14 +84,6 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-// console.log(convertMs(255436)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
-
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
-
-startBtn.addEventListener('click', () => {
-  timer.start();
-});
