@@ -42,7 +42,7 @@ refs.start.addEventListener('click', onTimer);
 
 function onTimer() {
   intervalId = setInterval(() => {
-    ms = selectedDate - Date.now();
+    let ms = selectedDate - Date.now();
     const timeComponent = convertMs(ms);
     updateClockFace(timeComponent);
     refs.start.setAttribute('disabled', 'disabled');
